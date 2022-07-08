@@ -1,12 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import './styles.css';
-import { Card } from '../../components/Card'
+import { Card, CardProps } from '../../components/Card'
+
+type ProfileReponse = {
+  name: string;
+  avatar_url: string;
+}
+type User = {
+  name: string;
+  avatar: string;
+}
 
 
 export function Home() {
   const [studentName, setStudentName] = useState();
-  const [students, setStudents] = useState([]);
-  const [user, setUser] = useState({ name: '', avatar: '' })
+  const [students, setStudents] = useState<CardProps[]>([]);
+  const [user, setUser] = useState<User>({} as User)
 
   function handleAddStundent() {
     const newStudent = {
@@ -23,15 +32,17 @@ export function Home() {
   };
 
   useEffect(() => {
-    fetch('https://api.github.com/users/chelfonseca')
-      .then(response => response.json())
-      .then(data => {
-        setUser({
+    async function fetchData(){
+      const response = await fetch('https://api.github.com/users/chelfonseca');
+      const data = await response.json() as ProfileReponse;
+          
+      setUser({
           name: data.name,
           avatar: data.avatar_url,
-        })
-      })
-  }, [])
+      });
+  } 
+  fetchData();
+},[]);
 
 
 
